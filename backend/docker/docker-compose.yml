@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:14
+    container_name: chalten_postgres
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=chalten
+      - POSTGRES_PASSWORD=chalten123
+      - POSTGRES_DB=chalten_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chalten_network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chalten"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis para caché
+  redis:
+    image: redis:alpine
+    container_name: chalten_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass redis123
+    volumes:
+      - redis_data:/data
+    networks:
+      - chalten_network
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Microservicio de Usuarios
+  users-service:
+    build:
+      context: ../services/users-service
+      dockerfile: Dockerfile
+    container_name: chalten_users_service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ../services/users-service:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=1
+      - SERVICE_NAME=users-service
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=chalten
+      - POSTGRES_PASSWORD=chalten123
+      - POSTGRES_DB=chalten_db
+      - REDIS_SERVER=redis
+      - REDIS_PASSWORD=redis123
+      - PYTHONPATH=/app
+    networks:
+      - chalten_network
+    restart: always
+    # El comando está definido en el Dockerfile con el script de inicio
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ../api-gateway
+      dockerfile: Dockerfile
+    container_name: chalten_api_gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../api-gateway:/app
+    depends_on:
+      - users-service
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=1
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=chalten
+      - POSTGRES_PASSWORD=chalten123
+      - POSTGRES_DB=chalten_db
+      - REDIS_SERVER=redis
+      - REDIS_PASSWORD=redis123
+      - USERS_SERVICE_URL=http://users-service:8001
+      - PYTHONPATH=/app
+    networks:
+      - chalten_network
+    restart: always
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+networks:
+  chalten_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
