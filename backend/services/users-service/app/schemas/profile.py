@@ -1,3 +1,4 @@
+# backend\services\users-service\app\schemas\profile.py
 from pydantic import BaseModel, EmailStr, validator
 from typing import Optional, List, Dict, Any, Union
 from datetime import datetime

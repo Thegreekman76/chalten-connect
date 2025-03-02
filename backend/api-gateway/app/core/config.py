@@ -1,3 +1,4 @@
+# backend\api-gateway\app\core\config.py
 import os
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseSettings, validator

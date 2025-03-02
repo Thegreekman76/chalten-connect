@@ -1,5 +1,7 @@
+# backend\services\users-service\app\main.py
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 import logging
@@ -41,7 +43,7 @@ app.add_middleware(
 async def health_check(db: Session = Depends(get_db)):
     try:
         # Verificar que la base de datos esté accesible
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "ok", "service": "users", "database": "connected"}
     except Exception as e:
         logger.error(f"Database connection error: {str(e)}")

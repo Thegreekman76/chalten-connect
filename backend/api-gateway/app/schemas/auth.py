@@ -1,3 +1,4 @@
+# backend\api-gateway\app\schemas\auth.py
 from pydantic import BaseModel
 
 class LoginRequest(BaseModel):

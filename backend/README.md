@@ -3,6 +3,24 @@
 Plataforma integral para turismo en El Chaltén que conecta visitantes con servicios locales mientras
 ofrece funcionalidades especializadas para áreas remotas de montaña.
 
+# Listar archivos y carpetas
+
+find . -type f -not -path "_/\._" -not -path "_/alembic/_" -not -path "_/**pycache**/_" | sort
+
+# Usuarios de prueba
+
+## Admin
+
+### name: tourist@example.com
+
+### pass: password123
+
+## TOURIST
+
+### name: tourist@example.com
+
+### pass: password123
+
 # Docker
 
 ## Ejecutar

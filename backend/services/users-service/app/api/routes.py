@@ -1,3 +1,4 @@
+# backend\services\users-service\app\api\routes.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -76,6 +77,17 @@ def read_users(
         
     users = db.query(User).offset(skip).limit(limit).all()
     return users
+
+@router.get("/me", response_model=UserSchema)
+def read_user_me(
+    *,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+) -> Any:
+    """
+    Obtener información del usuario actual.
+    """
+    return current_user
 
 @router.get("/{user_id}", response_model=UserSchema)
 def read_user(
@@ -210,16 +222,6 @@ def login_for_access_token(
     
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/me", response_model=UserSchema)
-def read_user_me(
-    *,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user),
-) -> Any:
-    """
-    Obtener información del usuario actual.
-    """
-    return current_user
 
 @router.get("/{user_id}/profile", response_model=ProfileSchema)
 def read_user_profile(

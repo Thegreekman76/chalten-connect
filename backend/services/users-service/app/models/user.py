@@ -1,3 +1,4 @@
+# backend\services\users-service\app\models\user.py
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func

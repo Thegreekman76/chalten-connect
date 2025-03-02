@@ -1,3 +1,4 @@
+# backend\services\users-service\app\api\deps.py
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -52,7 +53,8 @@ def get_current_user(
         raise credentials_exception
         
     # Buscar el usuario en la base de datos
-    user = db.query(User).filter(User.id == token_data.sub).first()
+    user_id_int = int(token_data.sub)
+    user = db.query(User).filter(User.id == user_id_int).first()
     if user is None:
         raise credentials_exception
         
