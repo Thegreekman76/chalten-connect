@@ -69,8 +69,10 @@ async def ping():
 
 # Incluir routers de los diferentes microservicios
 from app.routers import users
+from app.routers import content
 
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
+app.include_router(content.router, prefix=f"{settings.API_V1_STR}/content", tags=["content"])
 
 # Global exception handler
 @app.exception_handler(Exception)

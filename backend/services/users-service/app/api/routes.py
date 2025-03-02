@@ -183,6 +183,9 @@ def delete_user(
         
     # Eliminar el usuario (en cascada se eliminará su perfil)
     db.delete(user)
+    # Borrar perfil del usuario
+    profile = db.query(Profile).filter(User.id == user_id).first()
+    db.delete(profile)
     db.commit()
     
     return user

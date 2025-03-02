@@ -7,6 +7,8 @@ ofrece funcionalidades especializadas para áreas remotas de montaña.
 
 find . -type f -not -path "_/\._" -not -path "_/alembic/_" -not -path "_/**pycache**/_" | sort
 
+---
+
 # Usuarios de prueba
 
 ## Admin
@@ -20,6 +22,20 @@ find . -type f -not -path "_/\._" -not -path "_/alembic/_" -not -path "_/**pycac
 ### name: tourist@example.com
 
 ### pass: password123
+
+---
+
+# APIs
+
+## API Gateway
+
+### http://localhost:8000/api/v1/docs
+
+## API User Service
+
+### http://localhost:8001/docs
+
+---
 
 # Docker
 
@@ -53,3 +69,46 @@ docker-compose down -v --remove-orphans
 ### Reconstruir con caché fresca
 
 docker-compose up --force-recreate --build -d
+
+---
+
+# Futuras implementaciones
+
+## content-service
+
+### imagenes service
+
+#### En tus routes o controladores
+
+Cambiar entre implementaciones simplemente modificando la función `get_storage_service()`.
+
+Para utilizarlo en tu código, inyectarías esta dependencia donde sea necesario:
+
+```python
+# En tus routes o controladores
+from app.services.storage import get_storage_service
+
+@router.post("/images/")
+async def create_image(
+    file: UploadFile,
+    place_id: int,
+    current_user_id: int = Depends(get_current_user),
+    storage_service: StorageService = Depends(get_storage_service)
+):
+    """Crea una nueva imagen."""
+    # Subir el archivo
+    url = await storage_service.upload_file(
+        file.file,
+        file.filename,
+        file.content_type
+    )
+
+    # Crear la entrada en la base de datos con la URL
+    db_image = ImageModel(
+        place_id=place_id,
+        url=url,
+        # otros campos...
+    )
+
+    # Resto del código....
+```

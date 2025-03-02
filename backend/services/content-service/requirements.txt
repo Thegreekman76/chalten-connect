@@ -1,0 +1,20 @@
+# backend\services\content-service\requirements.txt
+fastapi==0.95.1
+uvicorn==0.22.0
+pydantic==1.10.7
+httpx==0.24.0
+python-jose==3.3.0
+passlib==1.7.4
+python-multipart==0.0.6
+redis==4.5.4
+bcrypt==4.0.1
+sqlalchemy==2.0.9
+psycopg2-binary==2.9.6
+alembic==1.10.4
+python-dotenv==1.0.0
+email-validator==2.0.0
+tenacity==8.2.2
+PyYAML==6.0
+Pillow==9.5.0  # Para manejo de imágenes
+boto3==1.26.129  # Para integración con AWS S3
+geopy==2.3.0  # Para cálculos geográficos

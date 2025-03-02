@@ -71,6 +71,36 @@ services:
     restart: always
     # El comando está definido en el Dockerfile con el script de inicio
 
+  content-service:
+    build:
+      context: ../services/content-service
+      dockerfile: Dockerfile
+    container_name: chalten_content_service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ../services/content-service:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=1
+      - SERVICE_NAME=content-service
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=chalten
+      - POSTGRES_PASSWORD=chalten123
+      - POSTGRES_DB=chalten_db
+      - REDIS_SERVER=redis
+      - REDIS_PASSWORD=redis123
+      - USERS_SERVICE_URL=http://users-service:8001
+      - PYTHONPATH=/app
+    networks:
+      - chalten_network
+    restart: always
+
   # API Gateway
   api-gateway:
     build:
@@ -93,6 +123,7 @@ services:
       - REDIS_SERVER=redis
       - REDIS_PASSWORD=redis123
       - USERS_SERVICE_URL=http://users-service:8001
+      - CONTENT_SERVICE_URL=http://content-service:8002
       - PYTHONPATH=/app
     networks:
       - chalten_network

@@ -38,7 +38,8 @@ class Settings(BaseSettings):
     
     # Microservices URLs
     USERS_SERVICE_URL: str = os.getenv("USERS_SERVICE_URL", "http://localhost:8001")
-    
+    CONTENT_SERVICE_URL: str = os.getenv("CONTENT_SERVICE_URL", "http://content-service:8002")
+
     # Environment
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
     DEBUG: bool = os.getenv("DEBUG", "1") == "1"
